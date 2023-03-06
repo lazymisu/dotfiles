@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>albumName</key>
+	<string>Guchi Polo</string>
+	<key>artistName</key>
+	<string>Saramalacara</string>
+	<key>coverURL</key>
+	<string>https://i.scdn.co/image/ab67616d0000b273fd012d0b05bfc5eb5dcd73b6</string>
+	<key>currentPosition</key>
+	<string>132</string>
+	<key>isLoved</key>
+	<string>false</string>
+	<key>oldFilename</key>
+	<string>NA</string>
+	<key>songChanged</key>
+	<string>false</string>
+	<key>songDuration</key>
+	<string>201</string>
+	<key>songName</key>
+	<string>Guchi Polo</string>
+</dict>
+</plist>

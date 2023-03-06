@@ -1,0 +1,5 @@
+#! /usr/bin/env fish
+
+echo "Copying theme..."
+
+cp ~/misc/*.xccolortheme ~/Library/Developer/Xcode/UserData/FontAndColorThemes/

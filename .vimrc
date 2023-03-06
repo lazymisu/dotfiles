@@ -35,7 +35,7 @@ set updatetime=500
 
 " Add Vundle to runtime path
 set rtp+=~/.vim/bundle/Vundle.vim
-set rtp+=~/usr/local/opt/fzf
+set rtp+=/opt/homebrew/bin/fzf
 
 let g:gruvbox_invert_selection='0'
 
@@ -50,7 +50,6 @@ autocmd VimLeave * call system("tmux rename-window fish")
 
 call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
-Plugin 'dense-analysis/ale'
 Plugin 'RRethy/vim-illuminate'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'vim-airline/vim-airline'
@@ -60,11 +59,13 @@ Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-commentary'
 Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plugin 'junegunn/fzf.vim'
-Plugin 'kien/rainbow_parentheses.vim'
 Plugin 'machakann/vim-highlightedyank'
 Plugin 'arkwright/vim-whiplash'
-Plugin 'tpope/vim-obsession'
 Plugin 'mg979/vim-visual-multi'
+Plugin 'prabirshrestha/vim-lsp'
+Plugin 'mattn/vim-lsp-settings'
+Plugin 'prabirshrestha/asyncomplete.vim'
+Plugin 'prabirshrestha/asyncomplete-lsp.vim'
 call vundle#end()
 
 " colorscheme Tomorrow-Night
@@ -74,28 +75,52 @@ filetype plugin indent on
 
 let g:highlightedyank_highlight_duration = 100
 
-function! s:loadsession(dir)
-    exe 'cd ~/Developer/' . a:dir
-    silent! source .vimsession
-    exe 'cd ~/Developer/' . a:dir
+" SourceKit-LSP configuration
+if executable('sourcekit-lsp')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'sourcekit-lsp',
+        \ 'cmd': {server_info->['sourcekit-lsp']},
+        \ 'whitelist': ['swift'],
+        \ })
+endif
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    " nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    " nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    " nmap <buffer> gr <plug>(lsp-references)
+    " nmap <buffer> gi <plug>(lsp-implementation)
+    " nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    " nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    " nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+    
+    " refer to doc to add more commands
 endfunction
 
-function! s:savesession()
-    Obsess .vimsession
-endfunction
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
 
-if argc() == 0 | silent! source .vimsession | endif
-
-nnoremap <silent> <Leader>o :call <sid>savesession()<CR>:silent call fzf#run({'source': 'ls ~/Developer/', 'options': '--reverse --prompt "Developer "', 'down': 20, 'dir': '~/Developer/', 'sink': function('<sid>loadsession') })<CR>
-nnoremap <Leader>e   :ALENextWrap<CR>
-nnoremap <Leader>F   :Rg
+nnoremap <Leader>pv  :Ex<CR>
+nnoremap <Leader>o   :Files ~/Developer<CR>
+nnoremap <Leader>F   :Rg<CR>
 nnoremap <Leader>t   :GFiles<CR>
 nnoremap <Leader>w   :w<CR>
 nnoremap <Leader>Q   :q!<CR>
-nnoremap <Leader>q   :call <sid>savesession()<CR>:q<CR>
+nnoremap <Leader>q   :q<CR>
 nnoremap <Leader>k   :%bd<CR>
-
-nnoremap <leader>p "+p
 
 nmap <PageUp> <C-U>
 nmap <PageDown> <C-D>
@@ -111,7 +136,7 @@ nnoremap <leader>P "+P
 vnoremap <leader>p "+p
 vnoremap <leader>P "+P
 
-nnoremap <Leader>,   :e ~/.vimrc<CR>:source ~/.vimrc<CR>
+nnoremap <Leader>,   :e ~/.vimrc<CR>
 
 map <Leader>b :Buffers<CR>
 

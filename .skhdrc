@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 # general window management
 alt - e : yabai -m window --toggle split
 alt - r : yabai -m space --rotate 90
@@ -31,3 +29,10 @@ alt + ctrl - l : yabai -m window --warp east
 # send window to monitor and follow focus
 alt - 1 : yabai -m window --display 1
 alt - 2 : yabai -m window --display 2
+
+# send window to space and follow focus
+alt + shift - 1 : yabai -m window --space 1
+alt + shift - 2 : yabai -m window --space 2
+alt + shift - 3 : yabai -m window --space 3
+alt + shift - 4 : yabai -m window --space 4
+alt + shift - 5 : yabai -m window --space 5
